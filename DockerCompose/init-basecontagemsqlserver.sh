@@ -1,0 +1,2 @@
+/opt/mssql-tools/bin/sqlcmd -S sqlserver -U sa -P SqlServer2019! -d master -i /tmp/BaseContagemSqlServer.sql
+/opt/mssql-tools/bin/sqlcmd -S sqlserver -U sa -P SqlServer2019! -d master -i /tmp/BaseHealthChecksSqlServer.sql

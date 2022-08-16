@@ -1,0 +1,52 @@
+services:
+  jaeger:
+    image: jaegertracing/all-in-one:latest
+    ports:
+      - "6831:6831/udp"
+      - "16686:16686"
+      - "14269:14269"
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2019-latest
+    environment:
+      SA_PASSWORD: "SqlServer2019!"
+      ACCEPT_EULA: "Y"
+      MSSQL_PID: "Developer"
+    ports:
+      - "1433:1433"
+  mssqltools:
+    image: mcr.microsoft.com/mssql-tools
+    depends_on:
+      - sqlserver
+    volumes:
+      - ./BaseContagemSqlServer.sql:/tmp/BaseContagemSqlServer.sql
+      - ./BaseHealthChecksSqlServer.sql:/tmp/BaseHealthChecksSqlServer.sql
+      - ./init-basecontagemsqlserver.sh:/tmp/init-basecontagemsqlserver.sh
+    command: /bin/bash ./tmp/init-basecontagemsqlserver.sh
+  postgres:
+    image: postgres
+    volumes:
+      - ./BaseContagemPostgreSql.sql:/docker-entrypoint-initdb.d/1-basecontagem.sql
+    environment:
+      POSTGRES_PASSWORD: "Postgres2022!"
+    ports:
+      - "5432:5432"
+  redis:
+    image: redis:alpine
+    ports:
+      - "6379:6379"
+  mysql:
+    image: mysql:5.7
+    volumes:
+      - ./BaseContagemMySql.sql:/docker-entrypoint-initdb.d/1-basecontagem.sql
+    environment:
+      MYSQL_ROOT_PASSWORD: "MySql2022!"
+      MYSQL_DATABASE: "basecontagem"
+    ports:
+      - "3306:3306"
+  mongo:
+    image: mongo
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: MongoDB2022!
+    ports:
+      - "27017:27017"
